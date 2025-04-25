@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.BE_NUXT.Configuration.JwtUtils;
 import com.BE_NUXT.Entity.Authentication;
 import com.BE_NUXT.Services.AuthService;
+import com.BE_NUXT.Services.LoginResponseDTO;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Authentication loginRequest) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody Authentication loginRequest) {
         // Authenticate the user
     	System.out.println("USERNAME: "+loginRequest.getUsername());
     	System.out.println("PASSWORD: "+loginRequest.getPassword());
@@ -40,10 +41,10 @@ public class AuthController {
             // If authentication is successful, generate the token
             String token = jwtUtils.generateToken(userOptional.get().getUsername());
             System.out.println("TOKEN: "+token);
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(new LoginResponseDTO(token));
         } else {
             // If authentication fails, return unauthorized response
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponseDTO("Invalid username or password"));
         }
     }
     

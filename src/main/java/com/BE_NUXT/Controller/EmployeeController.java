@@ -12,27 +12,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.BE_NUXT.Entity.PersonalEntity;
-import com.BE_NUXT.Services.PersonalService;
+import com.BE_NUXT.Entity.EmployeeEntity;
+import com.BE_NUXT.Services.EmployeeService;
 
 @RestController
-@RequestMapping("/api")
-public class PersonalController {
+@RequestMapping("/api/employee")
+public class EmployeeController {
 	
 	@Autowired
-	private PersonalService personService;
+	private EmployeeService employeeService;
 	
 	@GetMapping("/users")
-	public List<PersonalEntity> requestMethodName() {
-	    return personService.getAllPersonal();
+	public List<EmployeeEntity> requestMethodName() {
+	    return employeeService.getAllPersonal();
 	}
 	
-	@PostMapping("/add_personal")
-	public ResponseEntity<?> addPersonal(@Validated @RequestBody PersonalEntity personal) {
+	@PostMapping("/add_employee")
+	public ResponseEntity<String> addPersonal(@Validated @RequestBody EmployeeEntity employee) {
 		
 		try {
-            PersonalEntity savedPersonal = personService.addPersonal(personal);
-            return ResponseEntity.ok(savedPersonal);
+            EmployeeEntity savedPersonal = employeeService.addEmployee(employee);
+            return ResponseEntity.ok("Employee added successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
