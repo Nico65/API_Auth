@@ -11,13 +11,14 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtUtils {
 	
+	
 	private static final String SECRET_KEY= SecretKeyGenerator.generateSecretKey();
 	
 	public String generateToken(String username) {
 		return Jwts.builder()
 					.setSubject(username)
 					.setIssuedAt(new Date())
-					.setExpiration(new Date(System.currentTimeMillis() + 60 * 1000)) // 1 heure
+					.setExpiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000)) // 1 heure
 					.signWith(SignatureAlgorithm.HS256, SECRET_KEY)
 					.compact();
 	}

@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.BE_NUXT.Entity.Authentication;
+import com.BE_NUXT.Entity.Users;
 
 @Repository
-public interface AuthRepository extends JpaRepository<Authentication, Integer> {
+public interface AuthRepository extends JpaRepository<Users, Integer> {
 
-	Optional<Authentication> findByUsername(String username);
+	Optional<Users> findByUsername(String username);
 }

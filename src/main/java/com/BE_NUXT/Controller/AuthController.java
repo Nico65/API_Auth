@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BE_NUXT.Configuration.JwtUtils;
-import com.BE_NUXT.Entity.Authentication;
+import com.BE_NUXT.Entity.Users;
 import com.BE_NUXT.Services.AuthService;
 import com.BE_NUXT.Services.LoginResponseDTO;
 
@@ -30,29 +32,24 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody Authentication loginRequest) {
-        // Authenticate the user
-    	System.out.println("USERNAME: "+loginRequest.getUsername());
-    	System.out.println("PASSWORD: "+loginRequest.getPassword());
-    	
-        Optional<Authentication> userOptional = authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody Users loginRequest) {
+    	Optional<Users> userOptional = authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
 
         if (userOptional.isPresent()) {
-            // If authentication is successful, generate the token
             String token = jwtUtils.generateToken(userOptional.get().getUsername());
-            System.out.println("TOKEN: "+token);
             return ResponseEntity.ok(new LoginResponseDTO(token));
         } else {
-            // If authentication fails, return unauthorized response
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponseDTO("Invalid username or password"));
+            // Envoie un message d'erreur clair
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(new LoginResponseDTO(null, "Invalid username or password"));
         }
     }
     
     // Register new user and return status message
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Authentication registerRequest) {
+    public ResponseEntity<String> register(@RequestBody Users registerRequest) {
         // Call the UserService to handle registration and get the status message
-        String message = authService.registerUser(registerRequest.getUsername(), registerRequest.getPassword());
+        String message = authService.registerUser(registerRequest.getUsername(), registerRequest.getPassword(), registerRequest.getEmail(), registerRequest.getRole());
         
         if (message.equals("User registered successfully!")) {
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
@@ -61,9 +58,19 @@ public class AuthController {
         }
     }
     
-    @GetMapping("/users")
-    public List<Authentication> getUsers(){
-    	return authService.getAllUsers();
-    }
+//    @GetMapping("/users")
+//    public List<Users> getUsers(){
+//    	return authService.getAllUsers();
+//    }
 
+    @GetMapping("/users")
+    public ResponseEntity<?> getUsers() {
+        org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        return ResponseEntity.ok(authService.getAllUsers());
+    }
 }
