@@ -9,11 +9,11 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("*/**")
-	        .allowedOrigins("*")  // Le domaine de ton frontend Nuxt.js
+		registry.addMapping("/**")
+	        .allowedOrigins("http://localhost:5173", "http://localhost:3000")  // Le domaine de ton frontend ReactJs
 	        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	        .allowedHeaders("*")
-	        .allowCredentials(false);
+	        .allowCredentials(true);
 	}
 	
 }

@@ -23,9 +23,9 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Optional<Users> authenticate(String username, String password) {
+    public Optional<Users> authenticate(String email, String password) {
         // Find user by username
-        Optional<Users> userOptional = authRepository.findByUsername(username);
+        Optional<Users> userOptional = authRepository.findByEmail(email);
         
         if (userOptional.isPresent()) {
         	Users user = userOptional.get();

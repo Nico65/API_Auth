@@ -11,4 +11,7 @@ import com.BE_NUXT.Entity.Users;
 public interface AuthRepository extends JpaRepository<Users, Integer> {
 
 	Optional<Users> findByUsername(String username);
+	
+	Optional<Users> findByEmail(String email);
+	
 }

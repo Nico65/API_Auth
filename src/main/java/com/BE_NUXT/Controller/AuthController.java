@@ -33,10 +33,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody Users loginRequest) {
-    	Optional<Users> userOptional = authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+    	System.out.println("Email: "+ loginRequest.getEmail());
+    	
+    	Optional<Users> userOptional = authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
 
         if (userOptional.isPresent()) {
-            String token = jwtUtils.generateToken(userOptional.get().getUsername());
+            String token = jwtUtils.generateToken(userOptional.get().getEmail());
             return ResponseEntity.ok(new LoginResponseDTO(token));
         } else {
             // Envoie un message d'erreur clair
